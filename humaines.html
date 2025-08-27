@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ressources Humaines - Gestion des Employés</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Variables et reset */
+    :root {
+      --primary-color: #1565c0;
+      --secondary-color: #42a5f5;
+      --accent-color: #ff5252;
+      --light-color: #f5f9ff;
+      --dark-color: #0d47a1;
+      --text-color: #333;
+      --success-color: #4caf50;
+      --warning-color: #ff9800;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f8f9fa;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    /* En-tête */
+    .topbar {
+      background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: var(--box-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .topbar h1 {
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--secondary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    /* Navigation */
+    .navbar {
+      background-color: var(--secondary-color);
+      padding: 0.5rem 2rem;
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .navbar a:hover, .navbar a.active {
+      background-color: var(--dark-color);
+    }
+    
+    /* Contenu principal */
+    .content {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background-color: var(--primary-color);
+      color: white;
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+    
+    .back-link:hover {
+      background-color: var(--dark-color);
+      transform: translateY(-2px);
+    }
+    
+    /* Cartes de statistiques */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--box-shadow);
+      text-align: center;
+      transition: var(--transition);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-card h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .stat-value {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: var(--dark-color);
+      margin: 0.5rem 0;
+    }
+    
+    .stat-comparison {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .positive {
+      color: var(--success-color);
+    }
+    
+    .negative {
+      color: var(--accent-color);
+    }
+    
+    /* Tableaux et sections */
+    .section {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--box-shadow);
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .btn {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transition);
+    }
+    
+    .btn:hover {
+      background-color: #d32f2f;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary-color);
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--primary-color);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    
+    th {
+      background-color: var(--light-color);
+      color: var(--primary-color);
+      position: sticky;
+      top: 0;
+    }
+    
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+    
+    .status {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      display: inline-block;
+    }
+    
+    .status-active {
+      background-color: #e8f5e9;
+      color: var(--success-color);
+    }
+    
+    .status-leave {
+      background-color: #fff8e1;
+      color: var(--warning-color);
+    }
+    
+    .status-inactive {
+      background-color: #ffebee;
+      color: var(--accent-color);
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .action-btn {
+      padding: 0.3rem 0.6rem;
+      border-radius: var(--border-radius);
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .view-btn {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+    
+    .edit-btn {
+      background-color: var(--warning-color);
+      color: white;
+    }
+    
+    .delete-btn {
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    /* Formulaire */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.2);
+    }
+    
+    /* Graphique */
+    .chart-container {
+      height: 300px;
+      margin-top: 1.5rem;
+      position: relative;
+    }
+    
+    /* Anniversaires */
+    .birthdays {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    
+    .birthday-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background-color: var(--light-color);
+      border-radius: var(--border-radius);
+    }
+    
+    .birthday-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--secondary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    
+    /* Pied de page */
+    footer {
+      background-color: var(--dark-color);
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .navbar {
+        flex-wrap: wrap;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <h1><i class="fas fa-users"></i> Ressources Humaines</h1>
+    <div class="user-info">
+      <div class="user-avatar">HR</div>
+      <span>Gestionnaire RH</span>
+    </div>
+  </header>
+  
+  <nav class="navbar">
+    <a href="#" class="active"><i class="fas fa-home"></i> Tableau de bord</a>
+    <a href="#"><i class="fas fa-user-tie"></i> Employés</a>
+    <a href="#"><i class="fas fa-file-contract"></i> Contrats</a>
+    <a href="#"><i class="fas fa-calendar-check"></i> Présences</a>
+    <a href="#"><i class="fas fa-money-bill-wave"></i> Paies</a>
+    <a href="#"><i class="fas fa-chart-line"></i> Performances</a>
+  </nav>
+  
+  <main class="content">
+    <div class="dashboard-header">
+      <h2>Tableau de bord RH</h2>
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Retour au tableau de bord principal</a>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3><i class="fas fa-users"></i> Effectif total</h3>
+        <p class="stat-value">4</p>
+        <p class="stat-comparison positive"><i class="fas fa-arrow-up"></i> +5% vs mois dernier</p>
+      </div>
+      
+      <div class="stat-card">
+        <h3><i class="fas fa-user-clock"></i> Présence aujourd'hui</h3>
+        <p class="stat-value">3</p>
+        <p class="stat-comparison"><i class="fas fa-info-circle"></i> 1 en congé</p>
+      </div>
+      
+      <div class="stat-card">
+        <h3><i class="fas fa-briefcase"></i> Postes vacants</h3>
+        <p class="stat-value">7</p>
+        <p class="stat-comparison negative"><i class="fas fa-exclamation-circle"></i> 2 à pourvoir</p>
+      </div>
+      
+      <div class="stat-card">
+        <h3><i class="fas fa-calendar-alt"></i> Événements à venir</h3>
+        <p class="stat-value">5</p>
+        <p class="stat-comparison"><i class="fas fa-birthday-cake"></i> 3 anniversaires cette semaine</p>
+      </div>
+    </div>
+    
+    <div class="section">
+      <div class="section-header">
+        <h3><i class="fas fa-user-tie"></i> Liste des employés</h3>
+        <button class="btn"><i class="fas fa-plus"></i> Nouvel employé</button>
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom & Prénom</th>
+            <th>Poste</th>
+            <th>Département</th>
+            <th>Statut</th>
+            <th>Date d'embauche</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>EMP-1024</td>
+            <td>HIEN Luc</td>
+            <td>Responsable RH</td>
+            <td>Ressources Humaines</td>
+            <td><span class="status status-active">Actif</span></td>
+            <td>15/03/2019</td>
+            <td class="action-buttons">
+              <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+              <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+              <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>EMP-1025</td>
+            <td>SANOU Pierre</td>
+            <td>Comptable</td>
+            <td>Finance</td>
+            <td><span class="status status-active">Actif</span></td>
+            <td>22/06/2020</td>
+            <td class="action-buttons">
+              <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+              <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+              <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>EMP-1026</td>
+            <td>SAMA Sophie</td>
+            <td>Chef de projet</td>
+            <td>Marketing</td>
+            <td><span class="status status-leave">Congé maladie</span></td>
+            <td>08/11/2018</td>
+            <td class="action-buttons">
+              <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+              <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+              <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>EMP-1027</td>
+            <td>KAFANDO Isabelle</td>
+            <td>Secretaire</td>
+            <td>Secretariat</td>
+            <td><span class="status status-active">Actif</span></td>
+            <td>30/01/2022</td>
+            <td class="action-buttons">
+              <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
+              <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+              <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="form-row">
+      <div class="section">
+        <div class="section-header">
+          <h3><i class="fas fa-birthday-cake"></i> Anniversaires du mois</h3>
+        </div>
+        
+        <div class="birthdays">
+          <div class="birthday-card">
+            <div class="birthday-avatar">M</div>
+            <div>
+              <h4>HIEN Luc</h4>
+              <p>15 Mai - Responsable RH</p>
+            </div>
+          </div>
+          <div class="birthday-card">
+            <div class="birthday-avatar">P</div>
+            <div>
+              <h4>SANOU Pierre</h4>
+              <p>22 Mai - Comptable</p>
+            </div>
+          </div>
+          <div class="birthday-card">
+            <div class="birthday-avatar">S</div>
+            <div>
+              <h4>SAMA Sophie </h4>
+              <p>28 Mai - Chef de projet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div class="section-header">
+          <h3><i class="fas fa-tasks"></i> Tâches RH en attente</h3>
+        </div>
+        
+        <ul style="list-style-type: none;">
+          <li style="padding: 0.8rem; border-bottom: 1px solid #eee;">
+            <i class="fas fa-file-signature" style="color: var(--primary-color);"></i>
+            <b>3 contrats à renouveler</b>
+            <p style="color: #666; margin-top: 5px;">Dont 1 qui expire cette semaine</p>
+          </li>
+          <li style="padding: 0.8rem; border-bottom: 1px solid #eee;">
+            <i class="fas fa-user-plus" style="color: var(--success-color);"></i>
+            <b>5 entretiens à planifier</b>
+            <p style="color: #666; margin-top: 5px;">Pour les postes vacants</p>
+          </li>
+          <li style="padding: 0.8rem;">
+            <i class="fas fa-chart-line" style="color: var(--warning-color);"></i>
+            <b>Évaluations trimestrielles</b>
+            <p style="color: #666; margin-top: 5px;">À compléter avant le 30 mai</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <p>© 2025 Système de gestion des ressources humaines | Version 2.1</p>
+  </footer>
+</body>
+</html>
