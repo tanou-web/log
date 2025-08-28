@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NomDuLogiciel - Gestion des Stocks</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar de navigation -->
+        <nav class="sidebar">
+            <h2>NomDuLogiciel</h2>
+            <ul>
+                <li><a href="index.html">📊 Tableau de Bord</a></li>
+                <li><a href="caisse.html">💰 Caisse</a></li>
+                <li class="active"><a href="stock.html">📦 Stock</a></li>
+                <li><a href="inventaire.html">🔍 Inventaire</a></li>
+            </ul>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Gestion des Stocks</h1>
+                <div class="header-actions">
+                    <div class="entrepot-selector">
+                        <select id="select-entrepot">
+                            <option value="all">Tous les entrepôts</option>
+                            <option value="entrepot-principal">Entrepôt Principal</option>
+                            <option value="entrepot-est">Entrepôt Est</option>
+                            <option value="entrepot-ouest">Entrepôt Ouest</option>
+                        </select>
+                    </div>
+                    <button id="btn-ajouter-produit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nouveau Produit
+                    </button>
+                </div>
+            </header>
+
+            <!-- Barre de filtres et recherche -->
+            <div class="filters-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-stock" placeholder="Rechercher un produit...">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Filtrer par :</label>
+                    <select id="filter-category">
+                        <option value="all">Toutes catégories</option>
+                        <option value="construction">construction</option>
+                        <option value="Boissons">Boissons</option>
+                        <option value="Produits agricoles">Produits agricoles</option>
+                        <option value="alimentaire">alimentaire</option>
+                        <option value="céréales">céréales</option>
+                        <option value="hygiène">hygiène</option>
+
+                    </select>
+                    
+                    <select id="filter-stock">
+                        <option value="all">Tous les stocks</option>
+                        <option value="low">Stock faible</option>
+                        <option value="critical">Stock critique</option>
+                        <option value="out">Rupture</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tableau des stocks -->
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Référence</th>
+                            <th>Désignation</th>
+                            <th>Catégorie</th>
+                            <th>Prix d'achat</th>
+                            <th>Prix de vente</th>
+                            <th>Stock total</th>
+                            <th>Entrepôt Principal</th>
+                            <th>Entrepôt Est</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stock-table-body">
+                        <!-- Les produits seront chargés ici par JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pied de tableau : Résumé -->
+            <div class="table-footer">
+                <div class="summary-stats">
+                    <div class="stat">
+                        <span class="stat-label">Produits total:</span>
+                        <span class="stat-value" id="total-products">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Valeur totale:</span>
+                        <span class="stat-value" id="total-value">0.00 €</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">En alerte:</span>
+                        <span class="stat-value warning" id="alert-products">0</span>
+                    </div>
+                </div>
+                
+                <div class="pagination">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-download"></i> Exporter
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal pour ajouter/modifier un produit -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Nouveau Produit</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="product-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Référence *</label>
+                            <input type="text" id="product-ref" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Désignation *</label>
+                            <input type="text" id="product-name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Catégorie</label>
+                            <select id="product-category">
+                                <option value="informatique">Informatique</option>
+                                <option value="bureautique">Bureautique</option>
+                                <option value="materiel">Matériel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Stock de sécurité</label>
+                            <input type="number" id="product-safety-stock" value="5" min="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Prix d'achat (€) *</label>
+                            <input type="number" id="product-buy-price" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Prix de vente (€) *</label>
+                            <input type="number" id="product-sell-price" step="0.01" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Stock Entrepôt Principal</label>
+                            <input type="number" id="product-stock-main" value="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Stock Entrepôt Est</label>
+                            <input type="number" id="product-stock-east" value="0" min="0">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel">Annuler</button>
+                <button type="button" class="btn btn-primary" id="btn-save-product">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script-stock.js"></script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NomDuLogiciel - Inventaire</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar de navigation -->
+        <nav class="sidebar">
+            <h2>NomDuLogiciel</h2>
+            <ul>
+                <li><a href="index.html">📊 Tableau de Bord</a></li>
+                <li><a href="caisse.html">💰 Caisse</a></li>
+                <li><a href="stock.html">📦 Stock</a></li>
+                <li class="active"><a href="inventaire.html">🔍 Inventaire</a></li>
+            </ul>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Gestion des Inventaires</h1>
+                <div class="header-actions">
+                    <div class="entrepot-selector">
+                        <select id="select-entrepot">
+                            <option value="entrepot-principal">Entrepôt Principal</option>
+                            <option value="entrepot-est">Entrepôt Est</option>
+                            <option value="entrepot-ouest">Entrepôt Ouest</option>
+                        </select>
+                    </div>
+                    <button id="btn-nouvel-inventaire" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nouvel Inventaire
+                    </button>
+                </div>
+            </header>
+
+            <!-- Cartes de statut des inventaires -->
+            <div class="inventory-cards">
+                <div class="inventory-card">
+                    <div class="card-icon planning">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Planifiés</h3>
+                        <p class="card-number">2</p>
+                        <p class="card-desc">Inventaires à venir</p>
+                    </div>
+                </div>
+                
+                <div class="inventory-card">
+                    <div class="card-icon progress">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>En Cours</h3>
+                        <p class="card-number">1</p>
+                        <p class="card-desc">Inventaire actif</p>
+                    </div>
+                </div>
+                
+                <div class="inventory-card">
+                    <div class="card-icon completed">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Terminés</h3>
+                        <p class="card-number">8</p>
+                        <p class="card-desc">Ce mois</p>
+                    </div>
+                </div>
+                
+                <div class="inventory-card">
+                    <div class="card-icon variance">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Écarts</h3>
+                        <p class="card-number">-1.2%</p>
+                        <p class="card-desc">Moyenne mensuelle</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des inventaires -->
+            <div class="inventory-list-section">
+                <div class="section-header">
+                    <h2>Inventaires Récents</h2>
+                    <div class="filter-group">
+                        <select id="filter-status">
+                            <option value="all">Tous les statuts</option>
+                            <option value="planned">Planifié</option>
+                            <option value="in-progress">En Cours</option>
+                            <option value="completed">Terminé</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Référence</th>
+                                <th>Entrepôt</th>
+                                <th>Zone</th>
+                                <th>Date Début</th>
+                                <th>Date Fin</th>
+                                <th>Produits</th>
+                                <th>Écarts</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body">
+                            <!-- Les inventaires seront chargés ici par JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal pour démarrer un nouvel inventaire -->
+    <div id="new-inventory-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nouvel Inventaire</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="inventory-form">
+                    <div class="form-group">
+                        <label>Entrepôt *</label>
+                        <select id="inventory-warehouse" required>
+                            <option value="">Sélectionner un entrepôt</option>
+                            <option value="entrepot-principal">Entrepôt Principal</option>
+                            <option value="entrepot-est">Entrepôt Est</option>
+                            <option value="entrepot-ouest">Entrepôt Ouest</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Zone/Rayon (optionnel)</label>
+                        <input type="text" id="inventory-zone" placeholder="Ex: Zone A, Rayon 1-10">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Type d'inventaire *</label>
+                        <select id="inventory-type" required>
+                            <option value="complete">Complet</option>
+                            <option value="partial">Partiel (Zone spécifique)</option>
+                            <option value="cycle">Inventaire Cycle</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Commentaire (optionnel)</label>
+                        <textarea id="inventory-notes" rows="3" placeholder="Notes pour l'équipe..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-inventory">Annuler</button>
+                <button type="button" class="btn btn-primary" id="btn-start-inventory">Démarrer l'Inventaire</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour saisie inventaire (sur tablette) -->
+    <div id="count-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="count-modal-title">Saisie Inventaire</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="product-info">
+                    <h4 id="count-product-name">Nom du Produit</h4>
+                    <p id="count-product-ref">Référence: </p>
+                    <p id="count-theoretical">Stock théorique: <strong>0</strong></p>
+                </div>
+                
+                <div class="count-input">
+                    <label>Quantité comptée *</label>
+                    <input type="number" id="count-quantity" min="0" value="0" required>
+                </div>
+                
+                <div class="count-difference">
+                    <span>Écart: </span>
+                    <span id="count-difference">0</span>
+                </div>
+                
+                <div class="count-notes">
+                    <label>Notes (optionnel)</label>
+                    <textarea id="count-notes" rows="2" placeholder="Raison de l'écart..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-skip">Passer</button>
+                <button type="button" class="btn btn-primary" id="btn-confirm-count">Valider</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script-inventaire.js"></script>
+</body>
+</html>

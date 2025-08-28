@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NomDuLogiciel - Caisse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --sidebar-width: 250px;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar améliorée */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem 1rem;
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+            z-index: 1000;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 0.5rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            transition: var(--transition);
+            border-radius: var(--border-radius);
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar .active a {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+
+        /* Contenu principal */
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .content-header h1 {
+            font-size: 1.8rem;
+            color: var(--dark);
+        }
+
+        /* Boutons améliorés */
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e01b74;
+        }
+
+        /* Barre de recherche améliorée */
+        .search-bar-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            max-width: 600px;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        #search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--light-gray);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-result-item:hover {
+            background: var(--light);
+        }
+
+        .search-result-item .product-price {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Layout de caisse amélioré */
+        .caisse-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1.5rem;
+        }
+
+        /* Colonne ticket améliorée */
+        .ticket-column {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ticket-header {
+            padding: 1rem;
+            background: var(--light);
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-header h3 {
+            font-size: 1.2rem;
+        }
+
+        .ticket-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .ticket-table {
+            width: 100%;
+            border-collapse: collapse;
+            flex-grow: 1;
+        }
+
+        .ticket-table th {
+            text-align: left;
+            padding: 0.8rem;
+            background: var(--light);
+            font-weight: 600;
+        }
+
+        .ticket-table td {
+            padding: 0.8rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .ticket-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .ticket-actions {
+            padding: 1rem;
+            background: var(--light);
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Colonne paiement améliorée */
+        .payment-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .client-block, .total-block, .payment-block {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.2rem;
+        }
+
+        .client-block h4, .payment-block h4 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--dark);
+        }
+
+        .client-search input {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+
+        .client-info {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: var(--light);
+            border-radius: var(--border-radius);
+        }
+
+        .client-info p {
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        /* Bloc total amélioré */
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed var(--light-gray);
+        }
+
+        .total-line.final {
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-bottom: none;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+            border-top: 2px solid var(--light-gray);
+        }
+
+        .discount {
+            color: var(--danger);
+        }
+
+        /* Boutons de paiement améliorés */
+        .payment-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .pay-btn {
+            padding: 0.8rem;
+            border: 1px solid var(--light-gray);
+            background: var(--light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .pay-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* État vide du ticket */
+        .empty-ticket {
+            text-align: center;
+            color: var(--gray);
+            font-style: italic;
+            padding: 2rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 992px) {
+            .caisse-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                width: 70px;
+                padding: 1rem 0.5rem;
+            }
+            
+            .sidebar h2 {
+                font-size: 0;
+                padding-bottom: 0.5rem;
+            }
+            
+            .sidebar h2:after {
+                content: "NDL";
+                font-size: 1.2rem;
+            }
+            
+            .sidebar a span {
+                display: none;
+            }
+            
+            .sidebar a {
+                text-align: center;
+                padding: 0.8rem 0.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .ticket-actions {
+                flex-wrap: wrap;
+            }
+            
+            .payment-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation pour les nouveaux articles */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ticket-item {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Badge pour les quantités */
+        .quantity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quantity-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid var(--light-gray);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .quantity-btn:hover {
+            background: var(--light);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar de navigation améliorée -->
+        <nav class="sidebar">
+            <h2>NomDuLogiciel</h2>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-chart-bar"></i> <span>Tableau de Bord</span></a></li>
+                <li class="active"><a href="caisse.html"><i class="fas fa-cash-register"></i> <span>Caisse</span></a></li>
+                <li><a href="stock.html"><i class="fas fa-boxes"></i> <span>Stock</span></a></li>
+                <li><a href="inventaire.html"><i class="fas fa-search"></i> <span>Inventaire</span></a></li>
+            </ul>
+        </nav>
+
+        <!-- Contenu principal amélioré -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1><i class="fas fa-cash-register"></i> Caisse</h1>
+                <div class="header-actions">
+                    <button id="btn-nouveau-ticket" class="btn btn-primary">
+                        <i class="fas fa-receipt"></i> Nouveau Ticket
+                    </button>
+                </div>
+            </header>
+
+            <!-- Barre de recherche produit/client améliorée -->
+            <div class="search-bar-container">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Scannez un code-barres ou recherchez un produit...">
+                    <div id="search-results" class="search-results">
+                        <!-- Les résultats de recherche seront ajoutés ici par JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Corps de la caisse amélioré : Panier Client & Infos -->
+            <div class="caisse-layout">
+                <!-- Colonne de gauche : Ticket de caisse amélioré -->
+                <div class="ticket-column">
+                    <div class="ticket-header">
+                        <h3>Ticket de Caisse <span id="ticket-id">#1234</span></h3>
+                        <div class="ticket-date" id="current-date">27/05/2024 14:30</div>
+                    </div>
+
+                    <table class="ticket-table">
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Prix U.</th>
+                                <th>Qté</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticket-items">
+                            <!-- Les articles du ticket seront ajoutés ici par JavaScript -->
+                            <tr class="empty-ticket">
+                                <td colspan="5">Aucun produit ajouté. Scannez ou recherchez un produit.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="ticket-actions">
+                        <button class="btn btn-secondary" id="btn-remise">
+                            <i class="fas fa-percentage"></i> Remise
+                        </button>
+                        <button class="btn btn-danger" id="btn-annuler">
+                            <i class="fas fa-times"></i> Annuler
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Colonne de droite : Total & Paiement améliorés -->
+                <div class="payment-column">
+                    <!-- Bloc Client amélioré -->
+                    <div class="client-block">
+                        <h4><i class="fas fa-user"></i> Client</h4>
+                        <div class="client-search">
+                            <input type="text" id="client-search-input" placeholder="Rechercher un client...">
+                        </div>
+                        <div class="client-info" id="client-info" style="display: none;">
+                            <p><strong id="client-name">Jean Dupont</strong></p>
+                            <p>Société: <span id="client-company">ABC SARL</span></p>
+                            <p>N° Client: <span id="client-id">CLT-78945</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Bloc Total amélioré -->
+                    <div class="total-block">
+                        <div class="total-line">
+                            <span>Sous-total:</span>
+                            <span id="subtotal">0.00 €</span>
+                        </div>
+                        <div class="total-line discount">
+                            <span>Remise:</span>
+                            <span id="discount">-0.00 €</span>
+                        </div>
+                        <div class="total-line final">
+                            <span>TOTAL:</span>
+                            <span id="total-amount">0.00 €</span>
+                        </div>
+                    </div>
+
+                    <!-- Bloc Paiement amélioré -->
+                    <div class="payment-block">
+                        <h4><i class="fas fa-credit-card"></i> Paiement</h4>
+                        <div class="payment-buttons">
+                            <button class="pay-btn" data-method="cash">
+                                <i class="fas fa-money-bill-wave"></i> 
+                                <span>Espèces</span>
+                            </button>
+                            <button class="pay-btn" data-method="card">
+                                <i class="fas fa-credit-card"></i> 
+                                <span>Carte</span>
+                            </button>
+                            <button class="pay-btn" data-method="transfer">
+                                <i class="fas fa-exchange-alt"></i> 
+                                <span>Virement</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mise à jour de la date et heure
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric',
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                };
+                document.getElementById('current-date').textContent = now.toLocaleDateString('fr-FR', options);
+            }
+            
+            updateDateTime();
+            setInterval(updateDateTime, 60000); // Mise à jour chaque minute
+            
+            // Données factices pour la démonstration
+            const sampleProducts = [
+                { id: 1, name: "Câble HDMI 2.0", price: 12.90, stock: 15 },
+                { id: 2, name: "Souris sans fil", price: 24.50, stock: 8 },
+                { id: 3, name: "Clavier mécanique", price: 89.90, stock: 5 },
+                { id: 4, name: "Ecran 24\"", price: 149.90, stock: 3 },
+                { id: 5, name: "Casque gaming", price: 75.00, stock: 6 }
+            ];
+            
+            const sampleClients = [
+                { id: 1, name: "Jean Dupont", company: "ABC SARL", clientId: "CLT-78945" },
+                { id: 2, name: "Marie Martin", company: "XYZ SA", clientId: "CLT-78946" },
+                { id: 3, name: "Pierre Leroy", company: "Société Générale", clientId: "CLT-78947" }
+            ];
+            
+            let currentTicket = {
+                id: Math.floor(Math.random() * 10000),
+                items: [],
+                client: null,
+                discount: 0
+            };
+            
+            // Mettre à jour l'affichage du numéro de ticket
+            document.getElementById('ticket-id').textContent = '#' + currentTicket.id;
+            
+            // Recherche de produits
+            const searchInput = document.getElementById('search-input');
+            const searchResults = document.getElementById('search-results');
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+                
+                const filteredProducts = sampleProducts.filter(product => 
+                    product.name.toLowerCase().includes(query) || 
+                    product.id.toString().includes(query)
+                );
+                
+                displaySearchResults(filteredProducts);
+            });
+            
+            function displaySearchResults(products) {
+                searchResults.innerHTML = '';
+                
+                if (products.length === 0) {
+                    searchResults.innerHTML = '<div class="search-result-item">Aucun produit trouvé</div>';
+                } else {
+                    products.forEach(product => {
+                        const item = document.createElement('div');
+                        item.className = 'search-result-item';
+                        item.innerHTML = `
+                            <div>${product.name} <small>(Stock: ${product.stock})</small></div>
+                            <div class="product-price">${product.price.toFixed(2)} €</div>
+                        `;
+                        
+                        item.addEventListener('click', function() {
+                            addProductToTicket(product);
+                            searchInput.value = '';
+                            searchResults.style.display = 'none';
+                        });
+                        
+                        searchResults.appendChild(item);
+                    });
+                }
+                
+                searchResults.style.display = 'block';
+            }
+            
+            // Ajouter un produit au ticket
+            function addProductToTicket(product) {
+                // Masquer le message d'absence de produit
+                const emptyTicket = document.querySelector('.empty-ticket');
+                if (emptyTicket) {
+                    emptyTicket.remove();
+                }
+                
+                // Vérifier si le produit est déjà dans le ticket
+                const existingItem = currentTicket.items.find(item => item.product.id === product.id);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    currentTicket.items.push({
+                        product: product,
+                        quantity: 1
+                    });
+                }
+                
+                updateTicketDisplay();
+            }
+            
+            // Mettre à jour l'affichage du ticket
+            function updateTicketDisplay() {
+                const ticketItems = document.getElementById('ticket-items');
+                ticketItems.innerHTML = '';
+                
+                currentTicket.items.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.className = 'ticket-item';
+                    row.innerHTML = `
+                        <td>${item.product.name}</td>
+                        <td>${item.product.price.toFixed(2)} €</td>
+                        <td>
+                            <div class="quantity-badge">
+                                <button class="quantity-btn" data-action="decrease" data-id="${item.product.id}">-</button>
+                                ${item.quantity}
+                                <button class="quantity-btn" data-action="increase" data-id="${item.product.id}">+</button>
+                            </div>
+                        </td>
+                        <td>${(item.product.price * item.quantity).toFixed(2)} €</td>
+                        <td>
+                            <button class="btn btn-danger remove-item" data-id="${item.product.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    ticketItems.appendChild(row);
+                });
+                
+                // Ajouter les événements pour les boutons de quantité
+                document.querySelectorAll('.quantity-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const productId = parseInt(this.dataset.id);
+                        const action = this.dataset.action;
+                        
+                        const item = currentTicket.items.find(item => item.product.id === productId);
+                        
+                        if (action === 'increase') {
+                            item.quantity += 1;
+                        } else if (action === 'decrease' && item.quantity > 1) {
+                            item.quantity -= 1;
+                        }
+                        
+                        updateTicketDisplay();
+                    });
+                });
+                
+                // Ajouter les événements pour les boutons de suppression
+                document.querySelectorAll('.remove-item').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const productId = parseInt(this.dataset.id);
+                        currentTicket.items = currentTicket.items.filter(item => item.product.id !== productId);
+                        
+                        if (currentTicket.items.length === 0) {
+                            ticketItems.innerHTML = '<tr class="empty-ticket"><td colspan="5">Aucun produit ajouté. Scannez ou recherchez un produit.</td></tr>';
+                        } else {
+                            updateTicketDisplay();
+                        }
+                        
+                        updateTotals();
+                    });
+                });
+                
+                updateTotals();
+            }
+            
+            // Mettre à jour les totaux
+            function updateTotals() {
+                const subtotal = currentTicket.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+                const discount = currentTicket.discount;
+                const total = subtotal - discount;
+                
+                document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' €';
+                document.getElementById('discount').textContent = '-' + discount.toFixed(2) + ' €';
+                document.getElementById('total-amount').textContent = total.toFixed(2) + ' €';
+            }
+            
+            // Recherche de clients
+            const clientSearchInput = document.getElementById('client-search-input');
+            const clientInfo = document.getElementById('client-info');
+            
+            clientSearchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                
+                if (query.length < 2) {
+                    clientInfo.style.display = 'none';
+                    return;
+                }
+                
+                const client = sampleClients.find(client => 
+                    client.name.toLowerCase().includes(query) || 
+                    client.company.toLowerCase().includes(query) ||
+                    client.clientId.toLowerCase().includes(query)
+                );
+                
+                if (client) {
+                    document.getElementById('client-name').textContent = client.name;
+                    document.getElementById('client-company').textContent = client.company;
+                    document.getElementById('client-id').textContent = client.clientId;
+                    clientInfo.style.display = 'block';
+                    currentTicket.client = client;
+                } else {
+                    clientInfo.style.display = 'none';
+                }
+            });
+            
+            // Nouveau ticket
+            document.getElementById('btn-nouveau-ticket').addEventListener('click', function() {
+                currentTicket = {
+                    id: Math.floor(Math.random() * 10000),
+                    items: [],
+                    client: null,
+                    discount: 0
+                };
+                
+                document.getElementById('ticket-id').textContent = '#' + currentTicket.id;
+                document.getElementById('ticket-items').innerHTML = '<tr class="empty-ticket"><td colspan="5">Aucun produit ajouté. Scannez ou recherchez un produit.</td></tr>';
+                clientSearchInput.value = '';
+                clientInfo.style.display = 'none';
+                updateTotals();
+            });
+            
+            // Appliquer une remise
+            document.getElementById('btn-remise').addEventListener('click', function() {
+                const discount = parseFloat(prompt('Montant de la remise (€):', '0'));
+                
+                if (!isNaN(discount) && discount >= 0) {
+                    const subtotal = currentTicket.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+                    
+                    if (discount <= subtotal) {
+                        currentTicket.discount = discount;
+                        updateTotals();
+                    } else {
+                        alert('La remise ne peut pas dépasser le sous-total.');
+                    }
+                }
+            });
+            
+            // Annuler le ticket
+            document.getElementById('btn-annuler').addEventListener('click', function() {
+                if (confirm('Êtes-vous sûr de vouloir annuler ce ticket?')) {
+                    currentTicket.items = [];
+                    currentTicket.discount = 0;
+                    document.getElementById('ticket-items').innerHTML = '<tr class="empty-ticket"><td colspan="5">Aucun produit ajouté. Scannez ou recherchez un produit.</td></tr>';
+                    updateTotals();
+                }
+            });
+            
+            // Méthodes de paiement
+            document.querySelectorAll('.pay-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (currentTicket.items.length === 0) {
+                        alert('Le ticket est vide. Ajoutez des produits avant de procéder au paiement.');
+                        return;
+                    }
+                    
+                    const method = this.dataset.method;
+                    const total = currentTicket.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0) - currentTicket.discount;
+                    
+                    alert(`Paiement de ${total.toFixed(2)} € par ${method} effectué avec succès!`);
+                    
+                    // Réinitialiser après paiement
+                    currentTicket = {
+                        id: Math.floor(Math.random() * 10000),
+                        items: [],
+                        client: null,
+                        discount: 0
+                    };
+                    
+                    document.getElementById('ticket-id').textContent = '#' + currentTicket.id;
+                    document.getElementById('ticket-items').innerHTML = '<tr class="empty-ticket"><td colspan="5">Aucun produit ajouté. Scannez ou recherchez un produit.</td></tr>';
+                    clientSearchInput.value = '';
+                    clientInfo.style.display = 'none';
+                    updateTotals();
+                });
+            });
+            
+            // Fermer les résultats de recherche en cliquant à l'extérieur
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
