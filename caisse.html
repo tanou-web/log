@@ -34,11 +34,60 @@
             background-color: #f5f7fb;
             color: var(--dark);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         .app-container {
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
+        }
+
+        /* Header Mobile */
+        .mobile-header {
+            display: none;
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .mobile-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-header h2 {
+            font-size: 1.2rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Sidebar Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 998;
         }
 
         /* Sidebar améliorée */
@@ -49,7 +98,14 @@
             padding: 1.5rem 1rem;
             transition: var(--transition);
             box-shadow: var(--box-shadow);
-            z-index: 1000;
+            z-index: 999;
+            position: fixed;
+            height: 100vh;
+            transform: translateX(0);
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
         }
 
         .sidebar h2 {
@@ -77,6 +133,9 @@
             padding: 0.8rem 1rem;
             transition: var(--transition);
             border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
 
         .sidebar a:hover {
@@ -94,6 +153,13 @@
             flex: 1;
             padding: 1.5rem;
             transition: var(--transition);
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .main-content.full-width {
+            margin-left: 0;
+            width: 100%;
         }
 
         .content-header {
@@ -103,11 +169,16 @@
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid var(--light-gray);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .content-header h1 {
             font-size: 1.8rem;
             color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         /* Boutons améliorés */
@@ -121,6 +192,8 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
         }
 
         .btn-primary {
@@ -159,7 +232,7 @@
 
         .search-input-wrapper {
             position: relative;
-            max-width: 600px;
+            width: 100%;
         }
 
         .search-input-wrapper i {
@@ -241,6 +314,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .ticket-header h3 {
@@ -252,10 +327,15 @@
             font-size: 0.9rem;
         }
 
+        .ticket-table-container {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
         .ticket-table {
             width: 100%;
             border-collapse: collapse;
-            flex-grow: 1;
+            min-width: 500px;
         }
 
         .ticket-table th {
@@ -263,6 +343,7 @@
             padding: 0.8rem;
             background: var(--light);
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .ticket-table td {
@@ -280,6 +361,7 @@
             border-top: 1px solid var(--light-gray);
             display: flex;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         /* Colonne paiement améliorée */
@@ -380,67 +462,6 @@
             padding: 2rem;
         }
 
-        /* Responsive design */
-        @media (max-width: 992px) {
-            .caisse-layout {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                width: 70px;
-                padding: 1rem 0.5rem;
-            }
-            
-            .sidebar h2 {
-                font-size: 0;
-                padding-bottom: 0.5rem;
-            }
-            
-            .sidebar h2:after {
-                content: "NDL";
-                font-size: 1.2rem;
-            }
-            
-            .sidebar a span {
-                display: none;
-            }
-            
-            .sidebar a {
-                text-align: center;
-                padding: 0.8rem 0.5rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .main-content {
-                padding: 1rem;
-            }
-            
-            .content-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .ticket-actions {
-                flex-wrap: wrap;
-            }
-            
-            .payment-buttons {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Animation pour les nouveaux articles */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .ticket-item {
-            animation: fadeIn 0.3s ease;
-        }
-
         /* Badge pour les quantités */
         .quantity-badge {
             display: inline-flex;
@@ -464,13 +485,196 @@
         .quantity-btn:hover {
             background: var(--light);
         }
+
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .caisse-layout {
+                grid-template-columns: 1fr 300px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                padding: 1.2rem;
+            }
+            
+            .ticket-header {
+                padding: 0.8rem;
+            }
+            
+            .ticket-table th,
+            .ticket-table td {
+                padding: 0.6rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-header {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar-overlay.active {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1rem;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .content-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .caisse-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .ticket-table-container {
+                overflow-x: auto;
+            }
+            
+            .ticket-table {
+                min-width: 600px;
+            }
+            
+            .ticket-actions {
+                justify-content: center;
+            }
+            
+            .ticket-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .payment-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .pay-btn {
+                padding: 0.6rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 0.8rem;
+            }
+            
+            .content-header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .ticket-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+            
+            .ticket-actions {
+                flex-direction: column;
+            }
+            
+            .payment-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .client-block,
+            .total-block,
+            .payment-block {
+                padding: 1rem;
+            }
+            
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            
+            .search-result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ticket-table th,
+            .ticket-table td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .quantity-btn {
+                width: 20px;
+                height: 20px;
+                font-size: 0.7rem;
+            }
+            
+            .total-line.final {
+                font-size: 1rem;
+            }
+            
+            .pay-btn span {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .sidebar.hidden {
+                transform: translateX(0) !important;
+            }
+        }
+
+        /* Animation pour les nouveaux articles */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ticket-item {
+            animation: fadeIn 0.3s ease;
+        }
     </style>
 </head>
 <body>
+    <!-- Header Mobile -->
+    <header class="mobile-header">
+        <div class="mobile-header-content">
+            <h2><i class="fas fa-cash-register"></i> Caisse</h2>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="app-container">
         <!-- Sidebar de navigation améliorée -->
-        <nav class="sidebar">
-            <h2>NomDuLogiciel</h2>
+        <nav class="sidebar" id="sidebar">
+            <h2><i class="fas fa-warehouse"></i> NomDuLogiciel</h2>
             <ul>
                 <li><a href="index.html"><i class="fas fa-chart-bar"></i> <span>Tableau de Bord</span></a></li>
                 <li class="active"><a href="caisse.html"><i class="fas fa-cash-register"></i> <span>Caisse</span></a></li>
@@ -480,7 +684,7 @@
         </nav>
 
         <!-- Contenu principal amélioré -->
-        <main class="main-content">
+        <main class="main-content" id="mainContent">
             <header class="content-header">
                 <h1><i class="fas fa-cash-register"></i> Caisse</h1>
                 <div class="header-actions">
@@ -510,23 +714,25 @@
                         <div class="ticket-date" id="current-date">27/05/2024 14:30</div>
                     </div>
 
-                    <table class="ticket-table">
-                        <thead>
-                            <tr>
-                                <th>Produit</th>
-                                <th>Prix U.</th>
-                                <th>Qté</th>
-                                <th>Total</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="ticket-items">
-                            <!-- Les articles du ticket seront ajoutés ici par JavaScript -->
-                            <tr class="empty-ticket">
-                                <td colspan="5">Aucun produit ajouté. Scannez ou recherchez un produit.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="ticket-table-container">
+                        <table class="ticket-table">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Prix U.</th>
+                                    <th>Qté</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="ticket-items">
+                                <!-- Les articles du ticket seront ajoutés ici par JavaScript -->
+                                <tr class="empty-ticket">
+                                    <td colspan="5">Aucun produit ajouté. Scannez ou recherchez un produit.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <div class="ticket-actions">
                         <button class="btn btn-secondary" id="btn-remise">
@@ -594,6 +800,35 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Gestion du menu hamburger
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const mainContent = document.getElementById('mainContent');
+
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('active');
+                mainContent.classList.toggle('full-width');
+            });
+
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+                mainContent.classList.remove('full-width');
+            });
+
+            // Fermer le menu en cliquant sur un lien
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('open');
+                        sidebarOverlay.classList.remove('active');
+                        mainContent.classList.remove('full-width');
+                    }
+                });
+            });
+
             // Mise à jour de la date et heure
             function updateDateTime() {
                 const now = new Date();
@@ -888,7 +1123,41 @@
                     searchResults.style.display = 'none';
                 }
             });
+
+            // Ajuster la hauteur du main-content
+            function adjustMainContentHeight() {
+                if (window.innerWidth <= 768) {
+                    const headerHeight = document.querySelector('.mobile-header').offsetHeight;
+                    mainContent.style.minHeight = `calc(100vh - ${headerHeight}px)`;
+                } else {
+                    mainContent.style.minHeight = '100vh';
+                }
+            }
+
+            // Initial adjustment
+            adjustMainContentHeight();
+            
+            // Adjust on resize
+            window.addEventListener('resize', adjustMainContentHeight);
         });
     </script>
 </body>
 </html>
+    <style>
+        /* Styles spécifiques à la page caisse.html */
+
+        .caisse-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .ticket-column {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: flex;
+            height: 600px;
+            flex-direction: column;
+        }       
